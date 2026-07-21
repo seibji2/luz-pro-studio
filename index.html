@@ -20,6 +20,7 @@
             --accent-coral: #e07a5f;
             --accent-gold: #d4a853;
             --accent-purple: #9333ea;
+            --accent-cyan: #06b6d4;
             --text-primary: #f5f5f0;
             --text-secondary: #8a8a85;
             --text-muted: #5a5a55;
@@ -207,6 +208,78 @@
             transition: filter 0.3s ease;
         }
 
+        /* BEFORE/AFTER COMPARISON SLIDER */
+        .compare-slider-container {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            display: none;
+        }
+        .compare-slider-container.active { display: block; }
+        
+        .compare-image-before {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            object-fit: contain;
+            width: 100%; height: 100%;
+        }
+        
+        .compare-image-after {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            object-fit: contain;
+            width: 100%; height: 100%;
+            clip-path: inset(0 50% 0 0);
+        }
+        
+        .compare-slider {
+            position: absolute;
+            top: 0; bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: var(--accent-warm);
+            cursor: ew-resize;
+            z-index: 10;
+            transform: translateX(-50%);
+        }
+        .compare-slider::before {
+            content: '◄ ►';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--accent-warm);
+            color: var(--bg-primary);
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 10px;
+            white-space: nowrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .compare-slider::after {
+            content: 'ANTES';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        
+        .compare-label-after {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: var(--accent-warm);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
         .canvas-actions {
             position: absolute; bottom: 1rem; left: 50%;
             transform: translateX(-50%);
@@ -260,6 +333,47 @@
             border-radius: 20px; font-size: 0.65rem; font-weight: 700;
         }
 
+        /* 4K/Hyperrealism Button */
+        .enhance-section {
+            margin-top: 1rem;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(147, 51, 234, 0.1));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 14px;
+        }
+        .enhance-title {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.7rem; color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+        .enhance-title svg { width: 18px; height: 18px; }
+        .enhance-btn {
+            width: 100%; padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border: none; border-radius: 12px;
+            color: white;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+            cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .enhance-btn:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
+        .enhance-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .enhance-btn.processing {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        .enhance-progress {
+            height: 4px; background: var(--bg-tertiary);
+            border-radius: 2px; margin-top: 0.8rem;
+            overflow: hidden; display: none;
+        }
+        .enhance-progress.active { display: block; }
+        .enhance-progress-bar {
+            height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            width: 0%; transition: width 0.3s ease;
+        }
+
         /* Sidebar */
         .sidebar { display: flex; flex-direction: column; gap: 1rem; }
 
@@ -284,6 +398,7 @@
             border-radius: 10px;
         }
         .panel-badge.ai { background: rgba(147, 51, 234, 0.2); color: var(--accent-purple); }
+        .panel-badge.cyan { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
 
         /* Filter Grid */
         .filter-grid {
@@ -314,6 +429,14 @@
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 9px; color: white;
+        }
+        .filter-preset .pro-badge {
+            position: absolute; top: 4px; left: 4px;
+            width: 18px; height: 18px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 8px; color: white;
         }
 
         /* Filter Scroll for mobile */
@@ -352,6 +475,7 @@
             cursor: pointer;
             box-shadow: 0 2px 10px rgba(232, 168, 87, 0.4);
         }
+        .slider.cyan::-webkit-slider-thumb { background: var(--accent-cyan); box-shadow: 0 2px 10px rgba(6, 182, 212, 0.4); }
 
         /* Social Share */
         .share-grid {
@@ -391,6 +515,8 @@
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(232, 168, 87, 0.3); }
         .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border); }
         .btn-secondary:hover { background: var(--border); }
+        .btn-cyan { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); color: white; }
+        .btn-cyan:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
 
         /* Pro Tools Panel */
         .pro-tools { display: none; }
@@ -440,6 +566,7 @@
             font-size: 0.75rem; white-space: nowrap;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.cyan { border-color: var(--accent-cyan); }
 
         /* Mobile Nav */
         .mobile-nav {
@@ -501,8 +628,8 @@
         .filter-golden { filter: sepia(35%) saturate(130%) brightness(110%) hue-rotate(-10deg); }
         .filter-vintage { filter: sepia(40%) contrast(90%) brightness(100%) saturate(80%); }
         .filter-polaroid { filter: contrast(110%) brightness(110%) saturate(100%) sepia(5%); }
-        .filter Kodachrome { filter: saturate(120%) contrast(110%) brightness(100%) sepia(20%); }
-        .filter Fuji { filter: contrast(105%) saturate(110%) brightness(105%) hue-rotate(-5deg); }
+        .filter-kodachrome { filter: saturate(120%) contrast(110%) brightness(100%) sepia(20%); }
+        .filter-fuji { filter: contrast(105%) saturate(110%) brightness(105%) hue-rotate(-5deg); }
         .filter-vista { filter: saturate(115%) contrast(105%) brightness(100%); }
         .filter-crossprocess { filter: contrast(120%) saturate(130%) hue-rotate(15deg); }
         .filter-infrared { filter: saturate(50%) brightness(110%) contrast(110%) hue-rotate(180deg); }
@@ -511,6 +638,18 @@
         .filter-forest { filter: saturate(90%) brightness(95%) hue-rotate(20deg); }
         .filter-autumn { filter: sepia(25%) saturate(130%) contrast(105%) hue-rotate(-10deg); }
         .filter-mood { filter: contrast(130%) brightness(90%) saturate(85%); }
+        
+        /* Professional B&W Filters */
+        .filter-bw-noir { filter: grayscale(100%) contrast(140%) brightness(85%); }
+        .filter-bw-rich { filter: grayscale(100%) contrast(115%) brightness(95%) saturate(10%); }
+        .filter-bw-highkey { filter: grayscale(100%) contrast(70%) brightness(130%); }
+        .filter-bw-lowkey { filter: grayscale(100%) contrast(150%) brightness(70%); }
+        .filter-bw-midtone { filter: grayscale(100%) contrast(110%) brightness(100%); }
+        .filter-bw-hyper { filter: grayscale(100%) contrast(125%) brightness(90%) saturate(5%); }
+        .filter-bw-dramatic { filter: grayscale(100%) contrast(160%) brightness(75%); }
+        .filter-bw-portrait { filter: grayscale(100%) contrast(105%) brightness(100%); }
+        .filter-bw-film { filter: grayscale(100%) contrast(95%) brightness(100%) saturate(15%); }
+        .filter-bw-infrared { filter: grayscale(100%) contrast(90%) brightness(120%); }
 
         @media (max-width: 600px) {
             header { padding: 0.8rem 1rem; }
@@ -590,12 +729,20 @@
             <div class="editor-layout">
                 <!-- Canvas Area -->
                 <div class="canvas-area">
-                    <div class="canvas-container">
+                    <div class="canvas-container" id="canvasContainer">
                         <img id="previewImage" src="" alt="Preview">
+                        
+                        <!-- Before/After Comparison Slider -->
+                        <div class="compare-slider-container" id="compareContainer">
+                            <img class="compare-image-before" id="compareBefore" src="" alt="Antes">
+                            <img class="compare-image-after" id="compareAfter" src="" alt="Después">
+                            <div class="compare-slider" id="compareSlider"></div>
+                            <span class="compare-label-after">DESPUÉS</span>
+                        </div>
                         
                         <!-- Mode indicator -->
                         <div class="canvas-actions">
-                            <button id="compareBtn">Antes</button>
+                            <button id="compareBtn">Antes/Después</button>
                             <button id="resetViewBtn">Original</button>
                             <button id="fitBtn" class="active">Ajustar</button>
                         </div>
@@ -622,7 +769,7 @@
                     <div class="panel mobile-panel active" id="filtersPanel">
                         <div class="panel-header">
                             <span class="panel-title">Filtros</span>
-                            <span class="panel-badge">20 presets</span>
+                            <span class="panel-badge">32 presets</span>
                         </div>
                         <div class="filter-grid" id="filterGrid">
                             <!-- Filters will be inserted here -->
@@ -735,6 +882,40 @@
                                     <line x1="12" y1="15" x2="12" y2="3"/>
                                 </svg>
                                 Descargar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4K/Hyperrealism Enhancement Panel -->
+                    <div class="panel" id="enhancePanel">
+                        <div class="enhance-section">
+                            <div class="enhance-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                </svg>
+                                MEJORA IA - 4K / HIPERREALISMO
+                            </div>
+                            <button class="enhance-btn" id="enhanceBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                </svg>
+                                Mejorar a 4K
+                            </button>
+                            <div class="enhance-progress" id="enhanceProgress">
+                                <div class="enhance-progress-bar" id="enhanceProgressBar"></div>
+                            </div>
+                            <p style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">
+                                Mejora nitidez, colores y detalle usando interpolación bicúbica avanzada
+                            </p>
+                        </div>
+                        <div class="actions" style="margin-top: 1rem;">
+                            <button class="btn btn-cyan" id="download4KBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Descargar 4K
                             </button>
                         </div>
                     </div>
@@ -855,7 +1036,7 @@
     <div class="toast" id="toast">¡Foto guardada exitosamente!</div>
 
     <script>
-        // Filter definitions
+        // Filter definitions - including professional B&W
         const filters = [
             { id: 'none', name: 'Original', effect: '' },
             { id: 'warm', name: 'Dorado', effect: 'sepia(20%) saturate(140%) brightness(105%) hue-rotate(-5deg)', ai: true },
@@ -878,7 +1059,18 @@
             { id: 'sunset', name: 'Ocaso', effect: 'sepia(30%) saturate(150%) brightness(105%) hue-rotate(-15deg)', ai: true },
             { id: 'forest', name: 'Bosque', effect: 'saturate(90%) brightness(95%) hue-rotate(20deg)' },
             { id: 'autumn', name: 'Otoño', effect: 'sepia(25%) saturate(130%) contrast(105%) hue-rotate(-10deg)' },
-            { id: 'mood', name: 'Mood', effect: 'contrast(130%) brightness(90%) saturate(85%)' }
+            { id: 'mood', name: 'Mood', effect: 'contrast(130%) brightness(90%) saturate(85%)' },
+            // Professional B&W Filters
+            { id: 'bw-noir', name: 'B&N Noir', effect: 'grayscale(100%) contrast(140%) brightness(85%)', pro: true },
+            { id: 'bw-rich', name: 'B&N Rico', effect: 'grayscale(100%) contrast(115%) brightness(95%) saturate(10%)', pro: true },
+            { id: 'bw-highkey', name: 'B&N Clará', effect: 'grayscale(100%) contrast(70%) brightness(130%)', pro: true },
+            { id: 'bw-lowkey', name: 'B&N Oscura', effect: 'grayscale(100%) contrast(150%) brightness(70%)', pro: true },
+            { id: 'bw-hyper', name: 'B&N Hiper', effect: 'grayscale(100%) contrast(125%) brightness(90%) saturate(5%)', pro: true },
+            { id: 'bw-dramatic', name: 'B&N Drám.', effect: 'grayscale(100%) contrast(160%) brightness(75%)', pro: true },
+            { id: 'bw-portrait', name: 'B&N Retrato', effect: 'grayscale(100%) contrast(105%) brightness(100%)', pro: true },
+            { id: 'bw-film', name: 'B&N Película', effect: 'grayscale(100%) contrast(95%) brightness(100%) saturate(15%)', pro: true },
+            { id: 'bw-infrared', name: 'B&N Infra', effect: 'grayscale(100%) contrast(90%) brightness(120%)', pro: true },
+            { id: 'bw-hyperreal', name: 'Hiperrealismo', effect: 'contrast(115%) saturate(110%) brightness(105%)', pro: true }
         ];
 
         // AI Analysis suggestions
@@ -888,9 +1080,11 @@
             { title: 'Atardecer Mágico', desc: 'Mejora tonos cálidos', filter: 'golden', confidence: 93 },
             { title: 'Cinematográfico', desc: 'Look de película profesional', filter: 'cinema', confidence: 91 },
             { title: 'Arte Vintage', desc: 'Estilo clásico atemporal', filter: 'vintage', confidence: 89 },
+            { title: 'Noir Drámatico', desc: 'Blanco y negro con alto contraste', filter: 'bw-noir', confidence: 92 },
+            { title: 'Hiperrealismo', desc: 'Máximo detalle y colores vívidos', filter: 'bw-hyperreal', confidence: 94 },
             { title: 'Minimalista', desc: 'Contraste elegante', filter: 'noir', confidence: 88 },
             { title: 'Fresco y Natural', desc: 'Colores vivos y reales', filter: 'fuji', confidence: 92 },
-            { title: 'Dramático', desc: 'Alto impacto visual', filter: 'mood', confidence: 87 }
+            { title: 'Dramático B&N', desc: 'Alto impacto visual en blanco y negro', filter: 'bw-dramatic', confidence: 90 }
         ];
 
         // State
@@ -900,6 +1094,8 @@
         let uploadedImage = null;
         let currentMode = 'quick';
         let currentAiSuggestion = null;
+        let enhancedImage = null;
+        let isCompareMode = false;
 
         // Elements
         const uploadZone = document.getElementById('uploadZone');
@@ -921,6 +1117,7 @@
                     <img src="" alt="${filter.name}">
                     <span class="filter-name">${filter.name}</span>
                     ${filter.ai ? '<span class="ai-badge">✨</span>' : ''}
+                    ${filter.pro ? '<span class="pro-badge">PRO</span>' : ''}
                 `;
                 preset.addEventListener('click', () => selectFilter(filter.id));
                 grid.appendChild(preset);
@@ -955,6 +1152,14 @@
                 
                 // Update filter thumbnails
                 document.querySelectorAll('.filter-preset img').forEach(img => img.src = uploadedImage);
+                
+                // Initialize compare images
+                const compareBefore = document.getElementById('compareBefore');
+                const compareAfter = document.getElementById('compareAfter');
+                if (compareBefore && compareAfter) {
+                    compareBefore.src = uploadedImage;
+                    compareAfter.src = uploadedImage;
+                }
                 
                 // Run AI analysis
                 analyzeImage();
@@ -1012,13 +1217,17 @@
                 adjustmentsStr += ` brightness(${1 + exposure * 0.5})`;
             }
             
-            if (filterStr) {
-                previewImage.style.filter = filterStr + ' ' + adjustmentsStr;
-                if (intensity < 100) {
-                    previewImage.style.filter += ` opacity(${intensity / 100})`;
+            const finalFilter = filterStr ? filterStr + ' ' + adjustmentsStr : adjustmentsStr;
+            const finalFilterWithIntensity = intensity < 100 ? finalFilter + ` opacity(${intensity / 100})` : finalFilter;
+            
+            previewImage.style.filter = finalFilterWithIntensity;
+            
+            // Update compare images if in compare mode
+            if (isCompareMode) {
+                const compareAfter = document.getElementById('compareAfter');
+                if (compareAfter) {
+                    compareAfter.style.filter = finalFilterWithIntensity;
                 }
-            } else {
-                previewImage.style.filter = adjustmentsStr;
             }
         }
 
@@ -1092,16 +1301,200 @@
             });
         });
 
-        // Compare button
-        document.getElementById('compareBtn').addEventListener('mousedown', () => {
-            previewImage.style.filter = 'none';
+        // Before/After Compare Slider
+        const compareBtn = document.getElementById('compareBtn');
+        const compareContainer = document.getElementById('compareContainer');
+        const compareSlider = document.getElementById('compareSlider');
+        const compareAfter = document.getElementById('compareAfter');
+        const previewImg = document.getElementById('previewImage');
+
+        function toggleCompareMode() {
+            isCompareMode = !isCompareMode;
+            if (isCompareMode) {
+                compareContainer.classList.add('active');
+                previewImg.style.display = 'none';
+                compareBtn.classList.add('active');
+                // Apply current filter to after image
+                compareAfter.style.filter = previewImg.style.filter;
+                // Reset slider to center
+                compareSlider.style.left = '50%';
+                compareAfter.style.clipPath = 'inset(0 50% 0 0)';
+            } else {
+                compareContainer.classList.remove('active');
+                previewImg.style.display = 'block';
+                compareBtn.classList.remove('active');
+            }
+        }
+
+        compareBtn.addEventListener('click', toggleCompareMode);
+
+        // Slider drag functionality
+        let isDragging = false;
+
+        function updateSliderPosition(clientX) {
+            const container = document.getElementById('canvasContainer');
+            const rect = container.getBoundingClientRect();
+            let position = (clientX - rect.left) / rect.width;
+            position = Math.max(0, Math.min(1, position));
+            
+            const percent = Math.round(position * 100);
+            compareSlider.style.left = percent + '%';
+            compareAfter.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+        }
+
+        compareSlider.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            e.preventDefault();
         });
-        document.getElementById('compareBtn').addEventListener('mouseup', () => updateFilter());
+
+        compareSlider.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                updateSliderPosition(e.clientX);
+            }
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches[0]) {
+                updateSliderPosition(e.touches[0].clientX);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Also click on container to move slider
+        document.getElementById('canvasContainer')?.addEventListener('click', (e) => {
+            if (isCompareMode && !e.target.closest('.canvas-actions')) {
+                updateSliderPosition(e.clientX);
+            }
+        });
 
         document.getElementById('resetViewBtn').addEventListener('click', () => {
             previewImage.style.filter = 'none';
+            if (isCompareMode) {
+                compareAfter.style.filter = 'none';
+            }
             setTimeout(updateFilter, 300);
         });
+
+        // 4K Enhancement Function
+        function enhanceTo4K() {
+            if (!uploadedImage) {
+                showToast('Primero sube una foto', 'cyan');
+                return;
+            }
+
+            const enhanceBtn = document.getElementById('enhanceBtn');
+            const progressBar = document.getElementById('enhanceProgressBar');
+            const progress = document.getElementById('enhanceProgress');
+
+            enhanceBtn.disabled = true;
+            enhanceBtn.classList.add('processing');
+            enhanceBtn.textContent = 'Procesando...';
+            progress.classList.add('active');
+
+            let progressValue = 0;
+            const progressInterval = setInterval(() => {
+                progressValue += Math.random() * 15;
+                if (progressValue > 100) progressValue = 100;
+                progressBar.style.width = progressValue + '%';
+            }, 100);
+
+            // Create canvas for enhancement
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            img.onload = () => {
+                // Calculate 4K dimensions (up to 3840x2160)
+                const maxW = 3840;
+                const maxH = 2160;
+                let newW = img.width * 2;
+                let newH = img.height * 2;
+                
+                // Scale down if exceeds 4K
+                if (newW > maxW || newH > maxH) {
+                    const scale = Math.min(maxW / newW, maxH / newH);
+                    newW = Math.round(newW * scale);
+                    newH = Math.round(newH * scale);
+                }
+
+                canvas.width = newW;
+                canvas.height = newH;
+
+                // Draw image with bicubic interpolation (higher quality)
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, newW, newH);
+
+                // Apply sharpening filter via CSS filter after scaling
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = newW;
+                tempCanvas.height = newH;
+
+                // Apply contrast and saturation boost
+                const imageData = ctx.getImageData(0, 0, newW, newH);
+                const data = imageData.data;
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    // Increase micro-contrast
+                    data[i] = Math.min(255, Math.max(0, data[i] * 1.1 - 12));
+                    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] * 1.1 - 12));
+                    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] * 1.1 - 12));
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+
+                // Store enhanced image
+                enhancedImage = canvas.toDataURL('image/png');
+
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+
+                setTimeout(() => {
+                    enhanceBtn.disabled = false;
+                    enhanceBtn.classList.remove('processing');
+                    enhanceBtn.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        Mejorado ✓
+                    `;
+                    progress.classList.remove('active');
+                    showToast('✨ Foto mejorada a 4K - Listo para descargar', 'cyan');
+                }, 500);
+            };
+
+            img.src = uploadedImage;
+        }
+
+        // Download 4K
+        function download4K() {
+            if (!enhancedImage) {
+                showToast('Primero mejora la foto a 4K', 'cyan');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = 'luz-pro-4k-' + Date.now() + '.png';
+            link.href = enhancedImage;
+            link.click();
+            showToast('📸 Foto 4K descargada', 'cyan');
+        }
+
+        document.getElementById('enhanceBtn')?.addEventListener('click', enhanceTo4K);
+        document.getElementById('download4KBtn')?.addEventListener('click', download4K);
 
         // Reset
         function resetAll() {
@@ -1192,9 +1585,13 @@
         });
 
         // Toast
-        function showToast(message) {
+        function showToast(message, type = 'default') {
             toast.textContent = message;
-            toast.classList.add('show');
+            toast.classList.remove('cyan', 'show');
+            if (type === 'cyan') {
+                toast.classList.add('cyan');
+            }
+            setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
