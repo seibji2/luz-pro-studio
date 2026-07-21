@@ -1,0 +1,25 @@
+{
+  "name": "Luz Pro Studio",
+  "short_name": "Luz Pro",
+  "description": "Editor fotográfico profesional con IA - 20+ filtros, ajustes avanzados y herramientas de estudio",
+  "start_url": "/luz-pro-studio.html",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e8a857",
+  "orientation": "any",
+  "categories": ["photo", "utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230a0a0a' width='512' height='512' rx='80'/><circle cx='256' cy='256' r='150' fill='%23e8a857'/><circle cx='256' cy='256' r='70' fill='%230a0a0a'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0a0a' width='192' height='192' rx='30'/><circle cx='96' cy='96' r='56' fill='%23e8a857'/><circle cx='96' cy='96' r='26' fill='%230a0a0a'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
