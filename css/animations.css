@@ -1,0 +1,328 @@
+/* ============================================================
+   IRONFILTER PRO — Animations & Transitions
+   ============================================================ */
+
+/* ── PAGE TRANSITIONS ── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-right {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-left {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scale-in-fast {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── LOADING STATES ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -300px 0; }
+  100% { background-position: 300px 0; }
+}
+
+@keyframes progress-indeterminate {
+  0%   { left: -100%; width: 60%; }
+  100% { left: 100%; width: 60%; }
+}
+
+/* ── ACCENT ANIMATIONS ── */
+@keyframes accent-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 196, 0, 0); }
+  50%       { box-shadow: 0 0 16px 4px rgba(245, 196, 0, 0.15); }
+}
+
+@keyframes accent-pulse {
+  0%, 100% { border-color: rgba(245, 196, 0, 0.5); }
+  50%       { border-color: rgba(245, 196, 0, 1); }
+}
+
+@keyframes border-flow {
+  0%   { border-color: rgba(245, 196, 0, 0.2); }
+  50%  { border-color: rgba(245, 196, 0, 0.8); }
+  100% { border-color: rgba(245, 196, 0, 0.2); }
+}
+
+/* ── CANVAS ANIMATIONS ── */
+@keyframes canvas-appear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ── FILTER THUMB ── */
+@keyframes thumb-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(0.93); }
+  100% { transform: scale(1); }
+}
+
+.filter-thumb:active { animation: thumb-pop 0.15s ease; }
+
+/* ── TOAST ANIMATION ── */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(20px); }
+}
+
+.toast.show   { animation: toast-in  0.2s ease forwards; }
+.toast.hiding { animation: toast-out 0.2s ease forwards; }
+
+/* ── PANEL TRANSITIONS ── */
+.panel {
+  animation: fade-in 0.15s ease;
+}
+
+/* ── TOOL BUTTON EFFECTS ── */
+.tool-btn:active {
+  transform: scale(0.9);
+}
+
+.hdr-btn:active {
+  transform: scale(0.92);
+}
+
+/* ── SLIDER INTERACTION ── */
+.slider:active::-webkit-slider-thumb {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 6px rgba(245, 196, 0, 0.15);
+}
+
+/* ── LOADER BAR ── */
+.loader-bar-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.loader-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer-bar 1.2s ease infinite;
+}
+
+@keyframes shimmer-bar {
+  from { left: -100%; }
+  to   { left: 200%; }
+}
+
+/* ── SKELETON LOADING ── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface2) 0%,
+    var(--bg-surface3) 50%,
+    var(--bg-surface2) 100%
+  );
+  background-size: 300px 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ── DRAG OVER EFFECTS ── */
+.drop-zone.drag-active {
+  animation: border-flow 1.2s ease infinite;
+}
+
+/* ── CANVAS FRAME SHADOW ON ZOOM ── */
+.canvas-frame {
+  transition: box-shadow 0.2s ease;
+}
+
+/* ── BEFORE/AFTER SLIDER HANDLE ── */
+@keyframes handle-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%       { transform: translate(-50%, -50%) scale(1.08); }
+}
+
+.ba-handle { animation: handle-pulse 2s ease infinite; }
+.ba-line:active ~ .ba-handle,
+.ba-handle:active { animation: none; }
+
+/* ── HISTOGRAM APPEAR ── */
+@keyframes histogram-draw {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+.levels-canvas {
+  animation: histogram-draw 0.5s ease;
+}
+
+/* ── MODAL APPEAR ── */
+.modal {
+  animation: scale-in 0.18s ease;
+}
+
+/* ── ACTIVE FILTER RING ── */
+@keyframes ring-appear {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.filter-thumb.active::after {
+  animation: ring-appear 0.15s ease;
+}
+
+/* ── CURVE POINT APPEAR ── */
+@keyframes point-appear {
+  from { transform: translate(-50%, -50%) scale(0); }
+  to   { transform: translate(-50%, -50%) scale(1); }
+}
+
+.curve-point { animation: point-appear 0.12s ease; }
+
+/* ── TEXT LAYER ITEM ── */
+.text-layer-item {
+  animation: slide-right 0.15s ease;
+}
+
+/* ── PANEL TAB INDICATOR ── */
+.panel-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: ring-appear 0.15s ease;
+}
+
+.panel-tab { position: relative; }
+
+/* ── EXPORT PROGRESS ── */
+@keyframes export-spin {
+  to { transform: rotate(360deg); }
+}
+
+.export-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0,0,0,0.3);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: export-spin 0.6s linear infinite;
+}
+
+/* ── PROCESSING OVERLAY ── */
+.processing-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+  animation: fade-in 0.2s ease;
+}
+
+.processing-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(245, 196, 0, 0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-fade-bottom {
+  position: relative;
+}
+
+.scroll-fade-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(transparent, var(--bg-surface));
+  pointer-events: none;
+}
+
+/* ── CROP OVERLAY ── */
+@keyframes crop-dashes {
+  to { stroke-dashoffset: -20; }
+}
+
+.crop-border-animated {
+  animation: crop-dashes 0.5s linear infinite;
+}
+
+/* ── GUIDE LINES ── */
+@keyframes guide-appear {
+  from { opacity: 0; transform: scaleY(0); transform-origin: top; }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+
+/* ── REDUCE MOTION SUPPORT ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

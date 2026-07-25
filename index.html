@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="IRONFILTER PRO — Editor fotográfico profesional para fitness" />
+  <meta name="theme-color" content="#0a0a0c" />
+  <title>IRONFILTER PRO</title>
+
+  <!-- Preconnect fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,800;1,900&family=Barlow:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       LOADING SCREEN
+  ═══════════════════════════════════════════ -->
+  <div id="app-loader" class="app-loader" role="status" aria-label="Cargando IRONFILTER PRO">
+    <div class="loader-inner">
+      <div class="loader-logo">
+        <span class="loader-logo-iron">IRON</span><span class="loader-logo-filter">FILTER</span>
+        <sup class="loader-logo-pro">PRO</sup>
+      </div>
+      <div class="loader-bar-track">
+        <div class="loader-bar-fill" id="loader-bar"></div>
+      </div>
+      <div class="loader-status" id="loader-status">Iniciando motor gráfico…</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TOAST NOTIFICATIONS
+  ═══════════════════════════════════════════ -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════
+       CONTEXT MENU
+  ═══════════════════════════════════════════ -->
+  <div id="context-menu" class="context-menu hidden" role="menu">
+    <button class="ctx-item" data-action="undo" role="menuitem">
+      <span class="ctx-icon">↩</span> Deshacer <kbd>Ctrl+Z</kbd>
+    </button>
+    <button class="ctx-item" data-action="redo" role="menuitem">
+      <span class="ctx-icon">↪</span> Rehacer <kbd>Ctrl+Y</kbd>
+    </button>
+    <div class="ctx-sep"></div>
+    <button class="ctx-item" data-action="copy" role="menuitem">
+      <span class="ctx-icon">⎘</span> Copiar imagen <kbd>Ctrl+C</kbd>
+    </button>
+    <button class="ctx-item" data-action="download" role="menuitem">
+      <span class="ctx-icon">⬇</span> Descargar
+    </button>
+    <div class="ctx-sep"></div>
+    <button class="ctx-item" data-action="zoom-fit" role="menuitem">
+      <span class="ctx-icon">⊡</span> Ajustar a pantalla <kbd>F</kbd>
+    </button>
+    <button class="ctx-item" data-action="zoom-100" role="menuitem">
+      <span class="ctx-icon">◎</span> Zoom 100% <kbd>1</kbd>
+    </button>
+    <div class="ctx-sep"></div>
+    <button class="ctx-item" data-action="flip-h" role="menuitem">
+      <span class="ctx-icon">⇔</span> Voltear horizontal
+    </button>
+    <button class="ctx-item" data-action="flip-v" role="menuitem">
+      <span class="ctx-icon">⇕</span> Voltear vertical
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN APP
+  ═══════════════════════════════════════════ -->
+  <div id="app" class="app hidden">
+
+    <!-- ── HEADER ── -->
+    <header class="header" role="banner">
+      <div class="header-left">
+        <div class="logo" aria-label="IRONFILTER PRO">
+          <span class="logo-iron">IRON</span><span class="logo-filter">FILTER</span>
+          <sup class="logo-pro">PRO</sup>
+        </div>
+        <div class="header-sep"></div>
+        <!-- Undo/Redo -->
+        <button class="hdr-btn" id="btn-undo" title="Deshacer (Ctrl+Z)" disabled>
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h9a5 5 0 0 1 0 10H8"/><path d="M7 3 3 7l4 4"/></svg>
+        </button>
+        <button class="hdr-btn" id="btn-redo" title="Rehacer (Ctrl+Y)" disabled>
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 7H8a5 5 0 0 0 0 10h4"/><path d="M13 3l4 4-4 4"/></svg>
+        </button>
+        <div class="history-counter" id="history-counter" title="Historial">0</div>
+      </div>
+
+      <div class="header-center">
+        <div class="file-info" id="file-info">
+          <span class="file-name" id="file-name">Sin imagen</span>
+          <span class="file-meta" id="file-meta"></span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Zoom -->
+        <button class="hdr-btn" id="btn-zoom-out" title="Reducir zoom (-)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6"/><path d="M6 9h6M15 15l3 3"/></svg>
+        </button>
+        <div class="zoom-display" id="zoom-display" title="Clic para zoom 100%">100%</div>
+        <button class="hdr-btn" id="btn-zoom-in" title="Ampliar zoom (+)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6"/><path d="M9 6v6M6 9h6M15 15l3 3"/></svg>
+        </button>
+        <button class="hdr-btn" id="btn-zoom-fit" title="Ajustar a pantalla (F)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8V4h4M17 8V4h-4M3 12v4h4M17 12v4h-4"/></svg>
+        </button>
+        <div class="header-sep"></div>
+        <!-- Compare -->
+        <button class="hdr-btn" id="btn-compare" title="Modo comparar (C)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="7" height="12" rx="1"/><rect x="11" y="4" width="7" height="12" rx="1"/></svg>
+        </button>
+        <!-- Before/After -->
+        <button class="hdr-btn" id="btn-before-after" title="Antes / Después (B)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 4v12M4 10h12"/><circle cx="10" cy="10" r="8"/></svg>
+        </button>
+        <div class="header-sep"></div>
+        <!-- Export -->
+        <button class="btn-export" id="btn-export-open" title="Exportar imagen">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 3v10M6 9l4 4 4-4M3 15v2h14v-2"/></svg>
+          Exportar
+        </button>
+        <!-- New image -->
+        <button class="hdr-btn" id="btn-new-image" title="Abrir nueva imagen (O)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5a2 2 0 0 1 2-2h7l5 5v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/><path d="M12 3v5h5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── MAIN BODY ── -->
+    <div class="main-body">
+
+      <!-- LEFT SIDEBAR — Tools -->
+      <aside class="sidebar-left" role="complementary" aria-label="Herramientas">
+        <div class="tool-group">
+          <button class="tool-btn active" data-tool="select" title="Seleccionar (V)">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 2l13 8.5-6.5 1.5-3.5 6L4 2z"/></svg>
+          </button>
+          <button class="tool-btn" data-tool="crop" title="Recortar (C)">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2v13h13M2 5h3M17 15h-3v3"/></svg>
+          </button>
+          <button class="tool-btn" data-tool="text" title="Texto (T)">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 5h12v2H11v9H9V7H4V5z"/></svg>
+          </button>
+          <button class="tool-btn" data-tool="heal" title="Parche (J)">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="M10 7v6M7 10h6"/></svg>
+          </button>
+          <button class="tool-btn" data-tool="gradient" title="Degradado (G)">
+            <svg viewBox="0 0 20 20"><defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#f5c400"/></linearGradient></defs><rect width="20" height="20" rx="2" fill="url(#gd)"/></svg>
+          </button>
+        </div>
+        <div class="tool-sep-h"></div>
+        <div class="tool-group">
+          <button class="tool-btn" data-tool="eye-dropper" title="Cuentagotas (I)">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 3l4 4-8 8-2-2 8-8zM5 15l-2 2"/><circle cx="4" cy="16" r="1"/></svg>
+          </button>
+          <button class="tool-btn" data-tool="measure" title="Medir (M)">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="8" width="16" height="4" rx="1"/><path d="M6 8v-2M10 8V6M14 8V6"/></svg>
+          </button>
+        </div>
+        <div class="tool-sep-h"></div>
+        <div class="tool-group">
+          <!-- Rotate -->
+          <button class="tool-btn" id="tool-rotate-cw" title="Rotar 90° derecha">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 8A6 6 0 1 0 9 14"/><path d="M16 4l-1 4-4-1"/></svg>
+          </button>
+          <button class="tool-btn" id="tool-rotate-ccw" title="Rotar 90° izquierda">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8a6 6 0 1 1 6 6"/><path d="M4 4l1 4 4-1"/></svg>
+          </button>
+          <button class="tool-btn" id="tool-flip-h" title="Voltear horizontal">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3v14M5 6l-3 4 3 4M15 6l3 4-3 4"/></svg>
+          </button>
+          <button class="tool-btn" id="tool-flip-v" title="Voltear vertical">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 10h14M6 5l4-3 4 3M6 15l4 3 4-3"/></svg>
+          </button>
+        </div>
+        <div class="tool-sep-h"></div>
+        <!-- Guides -->
+        <div class="tool-group">
+          <button class="tool-btn toggle-btn" id="tool-thirds" title="Regla de tercios">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="16" height="16" rx="1"/><line x1="7.33" y1="2" x2="7.33" y2="18"/><line x1="12.67" y1="2" x2="12.67" y2="18"/><line x1="2" y1="7.33" x2="18" y2="7.33"/><line x1="2" y1="12.67" x2="18" y2="12.67"/></svg>
+          </button>
+          <button class="tool-btn toggle-btn" id="tool-guides" title="Guías">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="10" y1="2" x2="10" y2="18" stroke-dasharray="2,2"/><line x1="2" y1="10" x2="18" y2="10" stroke-dasharray="2,2"/></svg>
+          </button>
+          <button class="tool-btn toggle-btn" id="tool-ruler" title="Regla">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="8" width="16" height="4" rx="0.5"/><line x1="5" y1="8" x2="5" y2="10"/><line x1="8" y1="8" x2="8" y2="11"/><line x1="11" y1="8" x2="11" y2="10"/><line x1="14" y1="8" x2="14" y2="11"/></svg>
+          </button>
+        </div>
+      </aside>
+
+      <!-- CENTER — Canvas -->
+      <main class="canvas-stage" id="canvas-stage" role="main" aria-label="Área de edición">
+        <!-- Drop zone -->
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-zone-inner">
+            <div class="drop-icon">
+              <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="8" y="8" width="48" height="48" rx="4"/>
+                <circle cx="24" cy="24" r="5"/>
+                <path d="M8 42l12-12 8 8 10-14 14 18"/>
+                <path d="M32 18v-8M28 14l4-4 4 4"/>
+              </svg>
+            </div>
+            <h2 class="drop-title">Sube tu foto</h2>
+            <p class="drop-sub">Arrastra una imagen aquí, pégala con Ctrl+V<br>o haz clic para seleccionar</p>
+            <p class="drop-formats">JPG · PNG · WebP · BMP · TIFF · AVIF</p>
+            <button class="btn-open-image" id="btn-open-image">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 0 1 2-2h7l5 5v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5z"/><path d="M12 3v5h5"/></svg>
+              Abrir imagen
+            </button>
+            <input type="file" id="file-input" accept="image/*" style="display:none" aria-label="Seleccionar imagen" />
+          </div>
+        </div>
+
+        <!-- Canvas container -->
+        <div class="canvas-container" id="canvas-container">
+          <!-- Rulers -->
+          <div class="ruler ruler-h" id="ruler-h"></div>
+          <div class="ruler ruler-v" id="ruler-v"></div>
+          <div class="ruler-corner"></div>
+
+          <!-- Canvas viewport -->
+          <div class="canvas-viewport" id="canvas-viewport">
+            <div class="canvas-frame" id="canvas-frame">
+              <!-- Thirds overlay -->
+              <canvas class="overlay-canvas" id="overlay-canvas"></canvas>
+              <!-- Main display canvas -->
+              <canvas id="display-canvas" aria-label="Canvas de edición"></canvas>
+            </div>
+          </div>
+
+          <!-- Before/After slider -->
+          <div class="ba-slider hidden" id="ba-slider">
+            <div class="ba-line"></div>
+            <div class="ba-handle">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 5l-5 7 5 7M9 5l5 7-5 7"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom status bar -->
+        <div class="statusbar">
+          <div class="status-group">
+            <span class="status-item" id="status-dims">—</span>
+            <span class="status-sep">·</span>
+            <span class="status-item" id="status-color">—</span>
+          </div>
+          <div class="status-group">
+            <span class="status-item" id="status-tool">Seleccionar</span>
+          </div>
+          <div class="status-group">
+            <span class="status-item" id="status-filter">Sin filtro</span>
+            <span class="status-sep">·</span>
+            <span class="status-item" id="status-edits">0 edits</span>
+          </div>
+        </div>
+      </main>
+
+      <!-- RIGHT SIDEBAR — Panels -->
+      <aside class="sidebar-right" role="complementary" aria-label="Paneles de edición">
+
+        <!-- Panel tabs -->
+        <div class="panel-tabs">
+          <button class="panel-tab active" data-panel="filters" title="Filtros">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="M7 10a3 3 0 0 0 6 0"/></svg>
+            <span>Filtros</span>
+          </button>
+          <button class="panel-tab" data-panel="adjust" title="Ajustes">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h14M3 10h14M3 14h14"/><circle cx="7" cy="6" r="2" fill="currentColor"/><circle cx="12" cy="10" r="2" fill="currentColor"/><circle cx="8" cy="14" r="2" fill="currentColor"/></svg>
+            <span>Ajustes</span>
+          </button>
+          <button class="panel-tab" data-panel="curves" title="Curvas">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17 C5 17 6 5 10 10 S15 3 17 3"/></svg>
+            <span>Curvas</span>
+          </button>
+          <button class="panel-tab" data-panel="text" title="Texto">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 5h12v2H11v9H9V7H4V5z"/></svg>
+            <span>Texto</span>
+          </button>
+          <button class="panel-tab" data-panel="fitness" title="Fitness">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 10h2M15 10h2M5 7H3M17 7h-2M5 13H3M17 13h-2M5 7v6M15 7v6M7 10h6"/></svg>
+            <span>Fitness</span>
+          </button>
+          <button class="panel-tab" data-panel="export" title="Exportar">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3v10M6 9l4 4 4-4M3 15v2h14v-2"/></svg>
+            <span>Export</span>
+          </button>
+        </div>
+
+        <!-- Panel content -->
+        <div class="panel-content">
+
+          <!-- ── FILTERS PANEL ── -->
+          <div class="panel" id="panel-filters" data-panel="filters">
+            <div class="panel-search">
+              <input type="search" class="search-input" id="filter-search" placeholder="Buscar filtro…" />
+            </div>
+            <div class="filter-categories" id="filter-categories">
+              <button class="cat-btn active" data-cat="all">Todos</button>
+              <button class="cat-btn" data-cat="fitness">Fitness</button>
+              <button class="cat-btn" data-cat="dark">Dark</button>
+              <button class="cat-btn" data-cat="cinema">Cinema</button>
+              <button class="cat-btn" data-cat="vintage">Vintage</button>
+              <button class="cat-btn" data-cat="bw">B&W</button>
+              <button class="cat-btn" data-cat="hdr">HDR</button>
+              <button class="cat-btn" data-cat="color">Color</button>
+            </div>
+            <div class="filters-grid" id="filters-grid"></div>
+            <div class="filter-intensity">
+              <div class="adj-row">
+                <span class="adj-label">Intensidad</span>
+                <span class="adj-value" id="v-filter-intensity">100%</span>
+              </div>
+              <input type="range" class="slider" id="sl-filter-intensity" min="0" max="100" value="100" />
+            </div>
+          </div>
+
+          <!-- ── ADJUST PANEL ── -->
+          <div class="panel hidden" id="panel-adjust" data-panel="adjust">
+
+            <div class="panel-section">
+              <div class="section-hdr">
+                <span>Luz</span>
+                <button class="section-reset" data-group="light">Reiniciar</button>
+              </div>
+              <div class="adj-list">
+                <div class="adj-row"><span class="adj-label">Exposición</span><span class="adj-value" id="v-exposure">0</span></div>
+                <input type="range" class="slider" id="sl-exposure" min="-100" max="100" value="0" data-adj="exposure" />
+                <div class="adj-row"><span class="adj-label">Brillo</span><span class="adj-value" id="v-brightness">0</span></div>
+                <input type="range" class="slider" id="sl-brightness" min="-100" max="100" value="0" data-adj="brightness" />
+                <div class="adj-row"><span class="adj-label">Contraste</span><span class="adj-value" id="v-contrast">0</span></div>
+                <input type="range" class="slider" id="sl-contrast" min="-100" max="100" value="0" data-adj="contrast" />
+                <div class="adj-row"><span class="adj-label">Sombras</span><span class="adj-value" id="v-shadows">0</span></div>
+                <input type="range" class="slider" id="sl-shadows" min="-100" max="100" value="0" data-adj="shadows" />
+                <div class="adj-row"><span class="adj-label">Altas luces</span><span class="adj-value" id="v-highlights">0</span></div>
+                <input type="range" class="slider" id="sl-highlights" min="-100" max="100" value="0" data-adj="highlights" />
+                <div class="adj-row"><span class="adj-label">Blancos</span><span class="adj-value" id="v-whites">0</span></div>
+                <input type="range" class="slider" id="sl-whites" min="-100" max="100" value="0" data-adj="whites" />
+                <div class="adj-row"><span class="adj-label">Negros</span><span class="adj-value" id="v-blacks">0</span></div>
+                <input type="range" class="slider" id="sl-blacks" min="-100" max="100" value="0" data-adj="blacks" />
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <div class="section-hdr">
+                <span>Color</span>
+                <button class="section-reset" data-group="color">Reiniciar</button>
+              </div>
+              <div class="adj-list">
+                <div class="adj-row"><span class="adj-label">Temperatura</span><span class="adj-value" id="v-temperature">0</span></div>
+                <input type="range" class="slider slider-temp" id="sl-temperature" min="-100" max="100" value="0" data-adj="temperature" />
+                <div class="adj-row"><span class="adj-label">Matiz</span><span class="adj-value" id="v-tint">0</span></div>
+                <input type="range" class="slider" id="sl-tint" min="-100" max="100" value="0" data-adj="tint" />
+                <div class="adj-row"><span class="adj-label">Saturación</span><span class="adj-value" id="v-saturation">0</span></div>
+                <input type="range" class="slider slider-sat" id="sl-saturation" min="-100" max="100" value="0" data-adj="saturation" />
+                <div class="adj-row"><span class="adj-label">Intensidad</span><span class="adj-value" id="v-vibrance">0</span></div>
+                <input type="range" class="slider" id="sl-vibrance" min="-100" max="100" value="0" data-adj="vibrance" />
+                <div class="adj-row"><span class="adj-label">Tono (Hue)</span><span class="adj-value" id="v-hue">0°</span></div>
+                <input type="range" class="slider slider-hue" id="sl-hue" min="-180" max="180" value="0" data-adj="hue" />
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <div class="section-hdr">
+                <span>Detalle</span>
+                <button class="section-reset" data-group="detail">Reiniciar</button>
+              </div>
+              <div class="adj-list">
+                <div class="adj-row"><span class="adj-label">Claridad</span><span class="adj-value" id="v-clarity">0</span></div>
+                <input type="range" class="slider" id="sl-clarity" min="-100" max="100" value="0" data-adj="clarity" />
+                <div class="adj-row"><span class="adj-label">Textura</span><span class="adj-value" id="v-texture">0</span></div>
+                <input type="range" class="slider" id="sl-texture" min="-100" max="100" value="0" data-adj="texture" />
+                <div class="adj-row"><span class="adj-label">Nitidez</span><span class="adj-value" id="v-sharpen">0</span></div>
+                <input type="range" class="slider" id="sl-sharpen" min="0" max="100" value="0" data-adj="sharpen" />
+                <div class="adj-row"><span class="adj-label">Desenfoque</span><span class="adj-value" id="v-blur">0</span></div>
+                <input type="range" class="slider" id="sl-blur" min="0" max="100" value="0" data-adj="blur" />
+                <div class="adj-row"><span class="adj-label">Grano</span><span class="adj-value" id="v-grain">0</span></div>
+                <input type="range" class="slider" id="sl-grain" min="0" max="100" value="0" data-adj="grain" />
+                <div class="adj-row"><span class="adj-label">Viñeta</span><span class="adj-value" id="v-vignette">0</span></div>
+                <input type="range" class="slider" id="sl-vignette" min="-100" max="100" value="0" data-adj="vignette" />
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <div class="section-hdr"><span>HSL — Por canal</span></div>
+              <div class="hsl-channels">
+                <div class="hsl-tabs">
+                  <button class="hsl-tab active" data-hsl="all">Todos</button>
+                  <button class="hsl-tab" data-hsl="red" style="--c:#e02020">R</button>
+                  <button class="hsl-tab" data-hsl="orange" style="--c:#ff6600">Na</button>
+                  <button class="hsl-tab" data-hsl="yellow" style="--c:#f5c400">Am</button>
+                  <button class="hsl-tab" data-hsl="green" style="--c:#00c853">Ve</button>
+                  <button class="hsl-tab" data-hsl="aqua" style="--c:#00bcd4">Ci</button>
+                  <button class="hsl-tab" data-hsl="blue" style="--c:#2979ff">Az</button>
+                  <button class="hsl-tab" data-hsl="purple" style="--c:#cc00ff">Pu</button>
+                  <button class="hsl-tab" data-hsl="magenta" style="--c:#e91e8c">Ma</button>
+                </div>
+                <div class="hsl-sliders" id="hsl-sliders">
+                  <div class="adj-row"><span class="adj-label">Matiz</span><span class="adj-value" id="v-hsl-h">0</span></div>
+                  <input type="range" class="slider" id="sl-hsl-h" min="-180" max="180" value="0" />
+                  <div class="adj-row"><span class="adj-label">Saturación</span><span class="adj-value" id="v-hsl-s">0</span></div>
+                  <input type="range" class="slider" id="sl-hsl-s" min="-100" max="100" value="0" />
+                  <div class="adj-row"><span class="adj-label">Luminosidad</span><span class="adj-value" id="v-hsl-l">0</span></div>
+                  <input type="range" class="slider" id="sl-hsl-l" min="-100" max="100" value="0" />
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <div class="section-hdr"><span>Balance de color</span></div>
+              <div class="color-balance-tabs">
+                <button class="cb-tab active" data-range="shadows">Sombras</button>
+                <button class="cb-tab" data-range="midtones">Medios</button>
+                <button class="cb-tab" data-range="highlights">Altas luces</button>
+              </div>
+              <div class="adj-list" id="color-balance-sliders">
+                <div class="adj-row"><span class="adj-label" style="color:#3af">Cian — Rojo</span><span class="adj-value" id="v-cb-cr">0</span></div>
+                <input type="range" class="slider" id="sl-cb-cr" min="-100" max="100" value="0" />
+                <div class="adj-row"><span class="adj-label" style="color:#c4f">Magenta — Verde</span><span class="adj-value" id="v-cb-mg">0</span></div>
+                <input type="range" class="slider" id="sl-cb-mg" min="-100" max="100" value="0" />
+                <div class="adj-row"><span class="adj-label" style="color:#ff6">Amarillo — Azul</span><span class="adj-value" id="v-cb-yb">0</span></div>
+                <input type="range" class="slider" id="sl-cb-yb" min="-100" max="100" value="0" />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ── CURVES PANEL ── -->
+          <div class="panel hidden" id="panel-curves" data-panel="curves">
+            <div class="panel-section">
+              <div class="section-hdr">
+                <span>Curvas RGB</span>
+                <button class="section-reset" id="curves-reset">Reiniciar</button>
+              </div>
+              <div class="curves-channel-tabs">
+                <button class="curve-ch-tab active" data-ch="rgb">RGB</button>
+                <button class="curve-ch-tab" data-ch="r" style="color:#ff4444">R</button>
+                <button class="curve-ch-tab" data-ch="g" style="color:#44ff44">G</button>
+                <button class="curve-ch-tab" data-ch="b" style="color:#4488ff">B</button>
+              </div>
+              <canvas id="curves-canvas" width="280" height="280" class="curves-canvas"></canvas>
+              <div class="curves-info" id="curves-info">Clic para añadir punto · Arrastrar para mover</div>
+            </div>
+            <div class="panel-section">
+              <div class="section-hdr"><span>Niveles</span></div>
+              <canvas id="levels-canvas" width="280" height="80" class="levels-canvas"></canvas>
+              <div class="levels-inputs">
+                <div class="levels-row">
+                  <span class="adj-label">Entrada</span>
+                  <input type="number" class="levels-num" id="levels-in-black" min="0" max="254" value="0" />
+                  <input type="number" class="levels-num" id="levels-in-white" min="1" max="255" value="255" />
+                </div>
+                <div class="levels-row">
+                  <span class="adj-label">Salida</span>
+                  <input type="number" class="levels-num" id="levels-out-black" min="0" max="254" value="0" />
+                  <input type="number" class="levels-num" id="levels-out-white" min="1" max="255" value="255" />
+                </div>
+                <div class="levels-row">
+                  <span class="adj-label">Gamma</span>
+                  <input type="number" class="levels-num" id="levels-gamma" min="0.1" max="9.9" step="0.1" value="1.0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TEXT PANEL ── -->
+          <div class="panel hidden" id="panel-text" data-panel="text">
+            <div class="panel-section">
+              <div class="section-hdr">
+                <span>Capas de texto</span>
+                <button class="icon-btn" id="btn-add-text" title="Añadir texto">+</button>
+              </div>
+              <div class="text-layers" id="text-layers">
+                <div class="text-layers-empty">Sin capas de texto.<br>Haz clic en + para añadir.</div>
+              </div>
+            </div>
+            <div class="panel-section" id="text-editor-section" style="display:none">
+              <div class="section-hdr"><span>Editar texto</span></div>
+              <div class="text-editor-fields">
+                <textarea class="text-input" id="txt-content" rows="3" placeholder="Tu texto aquí…"></textarea>
+
+                <div class="field-row">
+                  <label class="field-lbl">Fuente</label>
+                  <select class="field-select" id="txt-font">
+                    <option value="'Barlow Condensed', sans-serif">Barlow Condensed</option>
+                    <option value="Impact, sans-serif">Impact</option>
+                    <option value="'Arial Black', sans-serif">Arial Black</option>
+                    <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+                    <option value="Georgia, serif">Georgia</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                  </select>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Estilo</label>
+                  <div class="style-btns">
+                    <button class="style-btn toggle-btn" id="txt-bold" data-prop="bold" title="Negrita"><b>B</b></button>
+                    <button class="style-btn toggle-btn" id="txt-italic" data-prop="italic" title="Cursiva"><i>I</i></button>
+                    <button class="style-btn toggle-btn" id="txt-caps" data-prop="caps" title="Mayúsculas">AA</button>
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Tamaño</label>
+                  <div class="size-stepper">
+                    <button class="step-btn" id="txt-size-down">−</button>
+                    <input type="number" class="size-input" id="txt-size" value="80" min="8" max="500" />
+                    <button class="step-btn" id="txt-size-up">+</button>
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Alineación</label>
+                  <div class="align-btns">
+                    <button class="style-btn toggle-btn active" data-align="left" title="Izquierda">⬤</button>
+                    <button class="style-btn toggle-btn" data-align="center" title="Centro">⬤</button>
+                    <button class="style-btn toggle-btn" data-align="right" title="Derecha">⬤</button>
+                  </div>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Color</label>
+                  <input type="color" class="color-pick" id="txt-color" value="#ffffff" />
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Color 2 (acento)</label>
+                  <input type="color" class="color-pick" id="txt-color2" value="#f5c400" />
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Espaciado</label>
+                  <input type="range" class="slider" id="txt-spacing" min="-10" max="30" value="0" />
+                  <span class="adj-value" id="v-txt-spacing">0</span>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Interlineado</label>
+                  <input type="range" class="slider" id="txt-leading" min="0.5" max="3" step="0.1" value="1.2" />
+                  <span class="adj-value" id="v-txt-leading">1.2</span>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Opacidad</label>
+                  <input type="range" class="slider" id="txt-opacity" min="0" max="100" value="100" />
+                  <span class="adj-value" id="v-txt-opacity">100%</span>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Rotación</label>
+                  <input type="range" class="slider" id="txt-rotation" min="-180" max="180" value="0" />
+                  <span class="adj-value" id="v-txt-rotation">0°</span>
+                </div>
+
+                <div class="field-row">
+                  <label class="field-lbl">Blend Mode</label>
+                  <select class="field-select" id="txt-blend">
+                    <option value="source-over">Normal</option>
+                    <option value="multiply">Multiply</option>
+                    <option value="screen">Screen</option>
+                    <option value="overlay">Overlay</option>
+                    <option value="hard-light">Hard Light</option>
+                    <option value="soft-light">Soft Light</option>
+                    <option value="color-dodge">Color Dodge</option>
+                    <option value="color-burn">Color Burn</option>
+                    <option value="difference">Difference</option>
+                    <option value="exclusion">Exclusion</option>
+                    <option value="luminosity">Luminosity</option>
+                  </select>
+                </div>
+
+                <div class="section-hdr" style="margin-top:8px"><span>Sombra</span></div>
+                <div class="adj-list">
+                  <div class="field-row">
+                    <label class="field-lbl">Activar</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="txt-shadow-on" checked />
+                      <span class="toggle-track"></span>
+                    </label>
+                  </div>
+                  <div class="adj-row"><span class="adj-label">Desenfoque</span><span class="adj-value" id="v-shadow-blur">10</span></div>
+                  <input type="range" class="slider" id="txt-shadow-blur" min="0" max="60" value="10" />
+                  <div class="adj-row"><span class="adj-label">OffsetX</span><span class="adj-value" id="v-shadow-x">3</span></div>
+                  <input type="range" class="slider" id="txt-shadow-x" min="-30" max="30" value="3" />
+                  <div class="adj-row"><span class="adj-label">OffsetY</span><span class="adj-value" id="v-shadow-y">3</span></div>
+                  <input type="range" class="slider" id="txt-shadow-y" min="-30" max="30" value="3" />
+                  <div class="field-row">
+                    <label class="field-lbl">Color sombra</label>
+                    <input type="color" class="color-pick" id="txt-shadow-color" value="#000000" />
+                  </div>
+                </div>
+
+                <div class="section-hdr" style="margin-top:8px"><span>Contorno</span></div>
+                <div class="adj-list">
+                  <div class="field-row">
+                    <label class="field-lbl">Activar</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="txt-stroke-on" />
+                      <span class="toggle-track"></span>
+                    </label>
+                  </div>
+                  <div class="adj-row"><span class="adj-label">Grosor</span><span class="adj-value" id="v-stroke-width">2</span></div>
+                  <input type="range" class="slider" id="txt-stroke-width" min="0" max="20" value="2" />
+                  <div class="field-row">
+                    <label class="field-lbl">Color contorno</label>
+                    <input type="color" class="color-pick" id="txt-stroke-color" value="#000000" />
+                  </div>
+                </div>
+
+                <div class="section-hdr" style="margin-top:8px"><span>Fondo de texto</span></div>
+                <div class="adj-list">
+                  <div class="field-row">
+                    <label class="field-lbl">Activar</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="txt-bg-on" />
+                      <span class="toggle-track"></span>
+                    </label>
+                  </div>
+                  <div class="adj-row"><span class="adj-label">Opacidad</span><span class="adj-value" id="v-bg-opacity">80%</span></div>
+                  <input type="range" class="slider" id="txt-bg-opacity" min="0" max="100" value="80" />
+                  <div class="field-row">
+                    <label class="field-lbl">Color fondo</label>
+                    <input type="color" class="color-pick" id="txt-bg-color" value="#000000" />
+                  </div>
+                </div>
+
+                <div class="section-hdr" style="margin-top:8px"><span>Degradado</span></div>
+                <div class="adj-list">
+                  <div class="field-row">
+                    <label class="field-lbl">Activar</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="txt-gradient-on" />
+                      <span class="toggle-track"></span>
+                    </label>
+                  </div>
+                  <div class="field-row">
+                    <label class="field-lbl">Fondo degradado</label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="txt-overlay-gradient" checked />
+                      <span class="toggle-track"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="text-action-btns">
+                  <button class="btn-danger" id="btn-delete-text">Eliminar capa</button>
+                  <button class="btn-secondary" id="btn-duplicate-text">Duplicar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── FITNESS PANEL ── -->
+          <div class="panel hidden" id="panel-fitness" data-panel="fitness">
+            <div class="panel-section">
+              <div class="section-hdr"><span>Templates Fitness</span></div>
+              <div class="templates-grid" id="templates-grid"></div>
+            </div>
+            <div class="panel-section">
+              <div class="section-hdr"><span>Herramientas</span></div>
+              <div class="fitness-tools">
+                <button class="fitness-tool-btn" data-template="transformation">
+                  <span class="ft-icon">🔥</span>
+                  <span>Transformación</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="before-after">
+                  <span class="ft-icon">⚡</span>
+                  <span>Antes / Después</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="workout-card">
+                  <span class="ft-icon">💪</span>
+                  <span>Workout Card</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="progress">
+                  <span class="ft-icon">📈</span>
+                  <span>Progress Photo</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="macros">
+                  <span class="ft-icon">🥗</span>
+                  <span>Macros</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="pr">
+                  <span class="ft-icon">🏆</span>
+                  <span>Personal Record</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="gym-poster">
+                  <span class="ft-icon">🏋️</span>
+                  <span>Gym Poster</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="bodybuilding">
+                  <span class="ft-icon">🥇</span>
+                  <span>Bodybuilding</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="powerlifting">
+                  <span class="ft-icon">⚔️</span>
+                  <span>Powerlifting</span>
+                </button>
+                <button class="fitness-tool-btn" data-template="crossfit">
+                  <span class="ft-icon">🎯</span>
+                  <span>CrossFit</span>
+                </button>
+              </div>
+            </div>
+            <!-- Dynamic template editor injected here by fitness.js -->
+            <div id="fitness-template-editor"></div>
+          </div>
+
+          <!-- ── EXPORT PANEL ── -->
+          <div class="panel hidden" id="panel-export" data-panel="export">
+            <div class="panel-section">
+              <div class="section-hdr"><span>Formato</span></div>
+              <div class="export-format-btns">
+                <button class="format-btn active" data-format="jpeg">JPEG</button>
+                <button class="format-btn" data-format="png">PNG</button>
+                <button class="format-btn" data-format="webp">WebP</button>
+              </div>
+            </div>
+            <div class="panel-section">
+              <div class="section-hdr"><span>Calidad</span></div>
+              <div class="adj-row"><span class="adj-label">Calidad</span><span class="adj-value" id="v-export-quality">92%</span></div>
+              <input type="range" class="slider" id="sl-export-quality" min="10" max="100" value="92" />
+            </div>
+            <div class="panel-section">
+              <div class="section-hdr"><span>Resolución</span></div>
+              <div class="export-scale-btns">
+                <button class="scale-btn" data-scale="0.5">0.5×</button>
+                <button class="scale-btn" data-scale="0.75">0.75×</button>
+                <button class="scale-btn active" data-scale="1">1×</button>
+                <button class="scale-btn" data-scale="1.5">1.5×</button>
+                <button class="scale-btn" data-scale="2">2×</button>
+                <button class="scale-btn" data-scale="4">4K</button>
+              </div>
+              <div class="export-dims" id="export-dims">—</div>
+            </div>
+            <div class="panel-section">
+              <div class="section-hdr"><span>Acciones</span></div>
+              <div class="export-actions">
+                <button class="btn-primary" id="btn-download">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 3v10M6 9l4 4 4-4M3 15v2h14v-2"/></svg>
+                  Descargar imagen
+                </button>
+                <button class="btn-secondary" id="btn-copy-clipboard">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="7" width="10" height="12" rx="1"/><path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>
+                  Copiar al portapapeles
+                </button>
+              </div>
+            </div>
+            <div class="panel-section">
+              <div class="section-hdr"><span>Info de exportación</span></div>
+              <div class="export-info" id="export-info">
+                <div class="info-row"><span>Formato</span><span id="ei-format">JPEG</span></div>
+                <div class="info-row"><span>Dimensiones</span><span id="ei-dims">—</span></div>
+                <div class="info-row"><span>Tamaño est.</span><span id="ei-size">—</span></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /panel-content -->
+
+        <!-- Crop panel (overlay) -->
+        <div class="crop-panel hidden" id="crop-panel">
+          <div class="section-hdr"><span>Recorte</span></div>
+          <div class="crop-ratios">
+            <button class="ratio-btn active" data-ratio="free">Libre</button>
+            <button class="ratio-btn" data-ratio="1:1">1:1</button>
+            <button class="ratio-btn" data-ratio="4:3">4:3</button>
+            <button class="ratio-btn" data-ratio="16:9">16:9</button>
+            <button class="ratio-btn" data-ratio="9:16">9:16</button>
+            <button class="ratio-btn" data-ratio="3:2">3:2</button>
+            <button class="ratio-btn" data-ratio="2:3">2:3</button>
+            <button class="ratio-btn" data-ratio="4:5">4:5</button>
+            <button class="ratio-btn" data-ratio="5:4">5:4</button>
+          </div>
+          <div class="crop-inputs">
+            <div class="crop-row">
+              <label>X</label><input type="number" id="crop-x" class="crop-num" value="0" />
+              <label>Y</label><input type="number" id="crop-y" class="crop-num" value="0" />
+            </div>
+            <div class="crop-row">
+              <label>W</label><input type="number" id="crop-w" class="crop-num" value="100" />
+              <label>H</label><input type="number" id="crop-h" class="crop-num" value="100" />
+            </div>
+          </div>
+          <div class="adj-row"><span class="adj-label">Enderezar</span><span class="adj-value" id="v-straighten">0°</span></div>
+          <input type="range" class="slider" id="sl-straighten" min="-45" max="45" step="0.1" value="0" />
+          <div class="crop-actions">
+            <button class="btn-secondary" id="btn-crop-cancel">Cancelar</button>
+            <button class="btn-primary" id="btn-crop-apply">Aplicar recorte</button>
+          </div>
+        </div>
+
+      </aside>
+    </div><!-- /main-body -->
+  </div><!-- /app -->
+
+  <!-- Keyboard shortcuts modal -->
+  <div class="modal-overlay hidden" id="shortcuts-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Atajos de teclado</h2>
+        <button class="modal-close" id="shortcuts-close">✕</button>
+      </div>
+      <div class="shortcuts-grid">
+        <div class="shortcut-col">
+          <h3>General</h3>
+          <div class="shortcut-row"><kbd>Ctrl+Z</kbd><span>Deshacer</span></div>
+          <div class="shortcut-row"><kbd>Ctrl+Y</kbd><span>Rehacer</span></div>
+          <div class="shortcut-row"><kbd>Ctrl+S</kbd><span>Guardar / Descargar</span></div>
+          <div class="shortcut-row"><kbd>Ctrl+C</kbd><span>Copiar al portapapeles</span></div>
+          <div class="shortcut-row"><kbd>O</kbd><span>Abrir imagen</span></div>
+          <div class="shortcut-row"><kbd>?</kbd><span>Mostrar atajos</span></div>
+        </div>
+        <div class="shortcut-col">
+          <h3>Vista</h3>
+          <div class="shortcut-row"><kbd>F</kbd><span>Ajustar a pantalla</span></div>
+          <div class="shortcut-row"><kbd>1</kbd><span>Zoom 100%</span></div>
+          <div class="shortcut-row"><kbd>+</kbd><span>Ampliar</span></div>
+          <div class="shortcut-row"><kbd>-</kbd><span>Reducir</span></div>
+          <div class="shortcut-row"><kbd>C</kbd><span>Modo comparar</span></div>
+          <div class="shortcut-row"><kbd>B</kbd><span>Antes / Después</span></div>
+        </div>
+        <div class="shortcut-col">
+          <h3>Herramientas</h3>
+          <div class="shortcut-row"><kbd>V</kbd><span>Seleccionar</span></div>
+          <div class="shortcut-row"><kbd>T</kbd><span>Texto</span></div>
+          <div class="shortcut-row"><kbd>R</kbd><span>Recortar</span></div>
+          <div class="shortcut-row"><kbd>G</kbd><span>Degradado</span></div>
+          <div class="shortcut-row"><kbd>H</kbd><span>Voltear horizontal</span></div>
+          <div class="shortcut-row"><kbd>Esc</kbd><span>Cancelar / Deseleccionar</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Modules — load after DOM -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

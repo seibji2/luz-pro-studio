@@ -1,0 +1,337 @@
+/* ============================================================
+   IRONFILTER PRO — Responsive Styles
+   Breakpoints: 1200, 960, 768, 480
+   ============================================================ */
+
+/* ── LARGE DESKTOP (1440+) ── */
+@media (min-width: 1440px) {
+  :root {
+    --sidebar-right-w: 320px;
+  }
+
+  .filters-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-preview {
+    width: 82px;
+    height: 58px;
+  }
+}
+
+/* ── MEDIUM DESKTOP (960–1199) ── */
+@media (max-width: 1199px) {
+  :root {
+    --sidebar-right-w: 272px;
+  }
+
+  .filters-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-preview {
+    width: 62px;
+    height: 44px;
+  }
+
+  .shortcuts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── TABLET LANDSCAPE (768–959) ── */
+@media (max-width: 959px) {
+  :root {
+    --sidebar-left-w:  40px;
+    --sidebar-right-w: 240px;
+    --header-h:        44px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .logo-pro { display: none; }
+
+  /* Hide some header buttons */
+  #btn-before-after { display: none; }
+
+  .header-right .header-sep { display: none; }
+
+  /* Compact sidebar */
+  .tool-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .tool-btn svg { width: 16px; height: 16px; }
+
+  /* Smaller filter grid */
+  .filter-preview {
+    width: 54px;
+    height: 38px;
+  }
+
+  .filter-label {
+    font-size: 0.56rem;
+  }
+
+  /* Panel tabs compact */
+  .panel-tab span { display: none; }
+  .panel-tab {
+    padding: 10px 4px;
+  }
+
+  /* Shortcuts in 2 cols */
+  .shortcuts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── TABLET PORTRAIT (480–767) ── */
+@media (max-width: 767px) {
+  :root {
+    --sidebar-left-w:  0px;
+    --sidebar-right-w: 100%;
+    --header-h:        44px;
+  }
+
+  body { overflow: auto; }
+
+  .app { height: auto; overflow: auto; }
+
+  .main-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 360px auto;
+    height: auto;
+  }
+
+  /* Hide left sidebar on mobile — tools go to bottom toolbar */
+  .sidebar-left {
+    display: none;
+  }
+
+  /* Canvas area */
+  .canvas-stage {
+    height: 360px;
+    flex-shrink: 0;
+  }
+
+  /* Right sidebar becomes bottom panel */
+  .sidebar-right {
+    border-left: none;
+    border-top: 1px solid var(--border-default);
+    height: auto;
+    max-height: 480px;
+  }
+
+  /* Header minimal */
+  .header {
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .file-info { display: none; }
+  .logo { font-size: 1.1rem; }
+
+  .hdr-btn {
+    width: 28px;
+    height: 28px;
+  }
+  .hdr-btn svg { width: 14px; height: 14px; }
+
+  .btn-export {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+
+  /* Ruler hidden */
+  .ruler,
+  .ruler-corner { display: none; }
+
+  .canvas-container {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  .canvas-viewport {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* Full-width filters */
+  .filters-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .filter-preview {
+    width: 60px;
+    height: 42px;
+  }
+
+  /* Shortcuts single col */
+  .shortcuts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Crop panel */
+  .crop-ratios {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Export compact */
+  .export-scale-btns {
+    flex-wrap: wrap;
+  }
+
+  /* Modal full screen */
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+
+  /* Mobile bottom toolbar */
+  .mobile-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px 12px;
+    background: var(--bg-dark);
+    border-top: 1px solid var(--border-default);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 80;
+  }
+
+  .mobile-tool-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: color var(--ease-fast);
+  }
+
+  .mobile-tool-btn svg { width: 20px; height: 20px; }
+  .mobile-tool-btn:active { color: var(--accent); }
+}
+
+/* ── MOBILE (< 480px) ── */
+@media (max-width: 479px) {
+  :root {
+    --header-h: 40px;
+  }
+
+  .canvas-stage { height: 300px; }
+
+  .filters-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-preview {
+    width: 70px;
+    height: 50px;
+  }
+
+  .logo-filter { display: none; }
+
+  .hdr-btn { width: 26px; height: 26px; }
+
+  .text-editor-fields { padding: 8px; }
+
+  .fitness-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .export-format-btns { flex-direction: column; }
+  .format-btn { padding: 8px; }
+}
+
+/* ── HIGH-DPI / RETINA ── */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .filter-preview canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* ── HOVER CAPABLE DEVICES ── */
+@media (hover: none) {
+  /* Remove hover pseudo tooltip on touch */
+  .tool-btn[title]::after { display: none; }
+
+  /* Larger touch targets */
+  .tool-btn    { width: 40px; height: 40px; }
+  .hdr-btn     { width: 36px; height: 36px; }
+  .cat-btn     { padding: 6px 14px; }
+  .filter-thumb { padding: 10px 4px 8px; }
+
+  /* Disable hover transforms */
+  .btn-primary:hover  { opacity: 1; }
+  .btn-export:hover   { opacity: 1; }
+}
+
+/* ── PRINT ── */
+@media print {
+  .header,
+  .sidebar-left,
+  .sidebar-right,
+  .statusbar,
+  .toast-container,
+  .context-menu { display: none; }
+
+  .main-body {
+    grid-template-columns: 1fr;
+  }
+
+  .canvas-stage {
+    height: 100vh;
+  }
+
+  #display-canvas {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+/* ── DARK/LIGHT MODE SUPPORT ── */
+/* App is always dark, but respects OS for accessibility */
+@media (prefers-color-scheme: light) {
+  /* Keep dark theme — override nothing */
+  /* The app is intentionally dark-only */
+}
+
+/* ── LANDSCAPE MOBILE ── */
+@media (max-width: 767px) and (orientation: landscape) {
+  .main-body {
+    grid-template-rows: 1fr auto;
+    height: calc(100vh - var(--header-h));
+    overflow: hidden;
+  }
+
+  .canvas-stage {
+    height: auto;
+    flex: 1;
+  }
+
+  .sidebar-right {
+    max-height: 220px;
+  }
+
+  .panel-content {
+    display: grid;
+    grid-auto-flow: column;
+  }
+}
